@@ -1,0 +1,21 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: hackathon-backend-404teamnotfound
+  description: Projeto Hackaton 2026 Team Not Found 404
+  annotations:
+    argocd/app-selector: 'appName=hackathon-backend-404teamnotfound'
+    argocd/instance-name: 'gitops-sandbox'
+    backstage.io/kubernetes-id: hackathon-backend-404teamnotfound
+    github.com/project-slug: caixasandbox/hackathon-backend-404teamnotfound
+    backstage.io/source-location: url:https://github.com/caixasandbox/hackathon-backend-404teamnotfound
+    backstage.io/techdocs-ref: url:https://github.com/caixasandbox/hackathon-backend-404teamnotfound/tree/main
+    backstage.io/managed-by-location: url:github.com/caixasandbox/hackathon-backend-404teamnotfound
+    sonarqube.org/project-key: sonarqube-produtos4/hackathon-backend-404teamnotfound
+    feedback/type: 'MAIL'
+    feedback/email-to: 'cxnde04@corp.caixa.gov.br'
+spec:
+  type: backend
+  lifecycle: hackathon
+  owner: group:default/g_az_hackathont12026
+  system: HACKATHON
