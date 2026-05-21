@@ -1,0 +1,1 @@
+-- V5 - Mantido para paridade com SQL Server. O schema H2 já nasce com os tamanhos finais.

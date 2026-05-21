@@ -25,4 +25,5 @@ public class AuthResource {
         AuthDTOs.AuthResponse response = authService.login(request);
         return ApiResponse.ok(response.mensagem(), response);
     }
+
 }

@@ -6,7 +6,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class UsuarioChecklistProcessoRepository implements PanacheRepositoryBase<UsuarioChecklistProcesso, Long> {
+
     public UsuarioChecklistProcesso buscar(Long usuarioId, Long checklistId) {
+        if (usuarioId == null || checklistId == null) {
+            return null;
+        }
         return find("usuario.id = ?1 and checklist.id = ?2", usuarioId, checklistId).firstResult();
     }
 }

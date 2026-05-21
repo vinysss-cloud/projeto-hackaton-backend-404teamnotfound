@@ -1,0 +1,12 @@
+2026-05-20 19:46:40.296508-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USUARIOS" not found (candidates are: "usuarios"); SQL statement:
+select u1_0.id,u1_0.ativo,u1_0.data_criacao,u1_0.matricula,u1_0.nome_exibicao,u1_0.primeiro_acesso,u1_0.senha_hash,u1_0.senha_salt,u1_0.ultimo_acesso from usuarios u1_0 where lower(u1_0.matricula)=? fetch first ? rows only [42103-240]
+2026-05-20 19:46:41.674763-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USUARIOS" not found (candidates are: "usuarios"); SQL statement:
+select u1_0.id,u1_0.ativo,u1_0.data_criacao,u1_0.matricula,u1_0.nome_exibicao,u1_0.primeiro_acesso,u1_0.senha_hash,u1_0.senha_salt,u1_0.ultimo_acesso from usuarios u1_0 where lower(u1_0.matricula)=? fetch first ? rows only [42103-240]
+2026-05-20 19:46:42.525663-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USUARIOS" not found (candidates are: "usuarios"); SQL statement:
+select u1_0.id,u1_0.ativo,u1_0.data_criacao,u1_0.matricula,u1_0.nome_exibicao,u1_0.primeiro_acesso,u1_0.senha_hash,u1_0.senha_salt,u1_0.ultimo_acesso from usuarios u1_0 where lower(u1_0.matricula)=? fetch first ? rows only [42103-240]
+2026-05-20 19:46:43.023852-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USUARIOS" not found (candidates are: "usuarios"); SQL statement:
+select u1_0.id,u1_0.ativo,u1_0.data_criacao,u1_0.matricula,u1_0.nome_exibicao,u1_0.primeiro_acesso,u1_0.senha_hash,u1_0.senha_salt,u1_0.ultimo_acesso from usuarios u1_0 where lower(u1_0.matricula)=? fetch first ? rows only [42103-240]

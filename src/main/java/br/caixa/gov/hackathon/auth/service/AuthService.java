@@ -1,7 +1,6 @@
 package br.caixa.gov.hackathon.auth.service;
 
 import br.caixa.gov.hackathon.auditoria.service.AuditoriaService;
-
 import br.caixa.gov.hackathon.auth.dto.AuthDTOs;
 import br.caixa.gov.hackathon.usuario.entity.PreferenciaUsuario;
 import br.caixa.gov.hackathon.usuario.entity.Usuario;
@@ -34,11 +33,11 @@ public class AuthService {
     public AuthDTOs.AuthResponse login(AuthDTOs.LoginRequest request) {
         validarLogin(request);
 
-        String matricula = request.matricula().trim().toUpperCase();
+        String matricula = normalizarMatricula(request.matricula());
         Usuario usuario = usuarioRepository.buscarPorMatricula(matricula);
 
         if (usuario == null) {
-            usuario = criarUsuario(matricula, request.senha(), request.nomeExibicao());
+            usuario = criarUsuario(matricula, request.senha(), request.nomeExibicao(), true);
             auditoriaService.registrar(usuario, "LOGIN_PRIMEIRO_ACESSO", "AUTH", "Usuário criado automaticamente no primeiro acesso.");
             return new AuthDTOs.AuthResponse(true, true, "Primeiro acesso identificado. Usuário criado e login realizado.", AuthDTOs.UsuarioResponse.from(usuario));
         }
@@ -68,14 +67,14 @@ public class AuthService {
         return new AuthDTOs.AuthResponse(true, false, "Login realizado com sucesso.", AuthDTOs.UsuarioResponse.from(usuario));
     }
 
-    private Usuario criarUsuario(String matricula, String senha, String nomeExibicao) {
+    private Usuario criarUsuario(String matricula, String senha, String nomeExibicao, boolean primeiroAcesso) {
         Usuario usuario = new Usuario();
         usuario.matricula = matricula;
         usuario.nomeExibicao = nomeExibicao == null || nomeExibicao.isBlank() ? matricula : nomeExibicao.trim();
         usuario.senhaSalt = passwordService.gerarSalt();
         usuario.senhaHash = passwordService.gerarHash(senha, usuario.senhaSalt);
         usuario.ativo = Boolean.TRUE;
-        usuario.primeiroAcesso = Boolean.TRUE;
+        usuario.primeiroAcesso = primeiroAcesso;
         usuario.dataCriacao = LocalDateTime.now();
         usuario.ultimoAcesso = LocalDateTime.now();
         usuarioRepository.persist(usuario);
@@ -100,5 +99,9 @@ public class AuthService {
         if (request.senha() == null || request.senha().isBlank()) {
             throw new BadRequestException("Senha é obrigatória.");
         }
+    }
+
+    private String normalizarMatricula(String matricula) {
+        return matricula.trim().toUpperCase();
     }
 }
