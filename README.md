@@ -2,33 +2,39 @@
 
 Backend Quarkus para atender o protótipo CAIXA HUB / SICAS, mantendo o frontend em outro repositório.
 
-## Escopo
+## Introdução
 
-Este projeto é **somente backend**. Ele não contém Angular, React, HTML, CSS ou telas.
+O CAIXA HUB Backend é um sistema desenvolvido para fornecer APIs REST que suportam funcionalidades essenciais para o protótipo CAIXA HUB. Ele é projetado para ser escalável, seguro e eficiente, atendendo às necessidades do frontend hospedado em outro repositório.
 
-O backend entrega APIs REST para o sistema frontend consumir:
+## Tecnologias Utilizadas
 
-- login por matrícula com auto-cadastro no primeiro acesso;
-- validação de senha a partir do segundo acesso;
-- usuário e preferências básicas;
-- portal inicial consolidado;
-- header e menu;
-- serviços internos;
-- favoritos do usuário;
-- sistemas do usuário;
-- acessos recentes;
-- normativos;
-- anotações;
-- processos internos e checklist;
-- busca orientada simples;
-- cotações/propostas da agência;
-- comentários e histórico de propostas;
-- auditoria automática dos fluxos principais;
-- criação de tabelas por scripts SQL/Flyway.
+- **Quarkus**: Framework Java para desenvolvimento de microsserviços.
+- **H2 Database**: Banco de dados em memória para desenvolvimento e testes.
+- **SQL Server**: Banco de dados relacional para ambientes de produção.
+- **Flyway**: Gerenciamento de migrações de banco de dados.
+- **Docker**: Contêineres para facilitar o desenvolvimento e implantação.
+- **Swagger**: Documentação interativa para APIs REST.
 
-Não há regra de gamificação, badges, ranking, desafios ou endpoints específicos de Angular.
+## Funcionalidades do Sistema
 
-## Rodar localmente
+- Login com auto-cadastro e validação de senha.
+- Gerenciamento de usuários e preferências.
+- Portal inicial consolidado com header, menu e serviços.
+- Favoritos, sistemas e acessos recentes do usuário.
+- Normativos, anotações e processos internos.
+- Busca orientada e gerenciamento de cotações/propostas.
+- Auditoria automática dos fluxos principais.
+- Criação e gerenciamento de tabelas via scripts SQL/Flyway.
+
+## Estrutura do Projeto
+
+- **src/main/java**: Código-fonte principal do backend.
+- **src/main/resources**: Arquivos de configuração e scripts de migração do banco de dados.
+- **database/sqlserver**: Scripts SQL específicos para o SQL Server.
+- **docs**: Documentação detalhada do projeto.
+- **scripts**: Scripts auxiliares para automação de tarefas.
+
+## Como Rodar Localmente
 
 ```bash
 ./mvnw quarkus:dev
@@ -46,27 +52,19 @@ Swagger:
 http://localhost:8080/api/q/swagger-ui
 ```
 
-## Banco local
+## Configuração do Banco de Dados
 
-Por padrão usa H2 persistente em arquivo:
+### H2 (Padrão)
+
+Banco de dados persistente em arquivo:
 
 ```properties
 jdbc:h2:file:./data/caixa-hub
 ```
 
-As tabelas são criadas por Flyway:
+### SQL Server
 
-```txt
-src/main/resources/db/migration/V1__create_caixa_hub_schema.sql
-src/main/resources/db/migration/V2__seed_caixa_hub_data.sql
-src/main/resources/db/migration/V3__adequacao_figma_portal.sql
-src/main/resources/db/migration/V4__create_cotacoes_propostas_schema.sql
-src/main/resources/db/migration/V5__fix_backend_consistency.sql
-```
-
-## SQL Server
-
-O perfil SQL Server está hardcoded no `application.properties` para facilitar o ambiente de demonstração:
+Configuração no `application.properties`:
 
 ```properties
 %sqlserver.quarkus.datasource.username=sa
@@ -74,15 +72,7 @@ O perfil SQL Server está hardcoded no `application.properties` para facilitar o
 %sqlserver.quarkus.datasource.jdbc.url=jdbc:sqlserver://localhost:1433;databaseName=caixa_hub;encrypt=false;trustServerCertificate=true
 ```
 
-Ajuste usuário, senha, host e banco conforme o ambiente usado.
-
-Para subir com SQL Server:
-
-```bash
-./mvnw quarkus:dev -Dquarkus.profile=sqlserver
-```
-
-Antes de subir nesse perfil, execute os scripts:
+Scripts necessários:
 
 ```txt
 database/sqlserver/01_schema_sqlserver.sql
@@ -92,181 +82,17 @@ database/sqlserver/04_cotacoes_propostas_sqlserver.sql
 database/sqlserver/05_fix_backend_consistency.sql
 ```
 
-## Fluxo principal
+## Endpoints Principais
 
-### Login / auto-cadastro
+- **Login**: `POST /api/auth/login`
+- **Portal Inicial**: `GET /api/portal/inicial/{usuarioId}`
+- **Favoritos**: `GET /api/favoritos/usuario/{usuarioId}`
+- **Sistemas do Usuário**: `GET /api/sistemas/usuario/{usuarioId}`
+- **Cotações/Propostas**: `GET /api/cotacoes-propostas`
+- **Auditoria**: `GET /api/auditoria/usuario/{usuarioId}`
 
-```http
-POST /api/auth/login
-```
+Para mais detalhes, consulte a seção "Fluxo principal".
 
-```json
-{
-  "matricula": "C000000",
-  "senha": "1234",
-  "nomeExibicao": "Usuário Teste"
-}
-```
-
-Regra:
-
-- se a matrícula não existir, cria o usuário;
-- se a matrícula existir, valida a senha;
-- se a senha estiver correta, retorna o usuário;
-- se a senha estiver errada, retorna erro de autenticação.
-
-### Portal inicial
-
-```http
-GET /api/portal/inicial/{usuarioId}
-```
-
-Retorna dados consolidados para o frontend montar a área inicial:
-
-- header;
-- usuário;
-- menu;
-- serviços;
-- conteúdos;
-- favoritos;
-- sistemas;
-- acessos recentes;
-- anotações;
-- normativos;
-- processos;
-- resumo de cotações/propostas;
-- cotações/propostas recentes.
-
-### Serviços
-
-```http
-GET  /api/servicos
-GET  /api/servicos/{id}
-POST /api/servicos/{id}/acessar?usuarioId=1
-```
-
-### Favoritos
-
-```http
-GET    /api/favoritos/usuario/{usuarioId}
-POST   /api/favoritos
-PUT    /api/favoritos/{id}
-DELETE /api/favoritos/{id}
-```
-
-### Sistemas do usuário
-
-```http
-GET    /api/sistemas/usuario/{usuarioId}
-POST   /api/sistemas
-PUT    /api/sistemas/{id}
-POST   /api/sistemas/{id}/acessar
-DELETE /api/sistemas/{id}
-```
-
-### Acessos recentes
-
-```http
-GET /api/acessos-recentes/usuario/{usuarioId}?limite=8
-```
-
-### Normativos
-
-```http
-GET /api/normativos
-GET /api/normativos/{id}
-```
-
-### Anotações
-
-```http
-GET    /api/anotacoes/usuario/{usuarioId}
-POST   /api/anotacoes
-PUT    /api/anotacoes/{id}
-DELETE /api/anotacoes/{id}
-```
-
-### Processos/checklist
-
-```http
-GET  /api/processos
-GET  /api/processos/{id}?usuarioId=1
-POST /api/processos/checklist/{checklistId}/marcar
-```
-
-### Busca orientada
-
-```http
-GET /api/assistente/buscar?q=abertura&usuarioId=1
-```
-
-### Cotações/propostas
-
-```http
-GET   /api/cotacoes-propostas
-GET   /api/cotacoes-propostas/resumo
-GET   /api/cotacoes-propostas/recentes?limite=6
-GET   /api/cotacoes-propostas/{id}
-POST  /api/cotacoes-propostas
-PUT   /api/cotacoes-propostas/{id}
-PATCH /api/cotacoes-propostas/{id}/status
-POST  /api/cotacoes-propostas/{id}/comentarios
-GET   /api/cotacoes-propostas/{id}/comentarios
-GET   /api/cotacoes-propostas/{id}/historico
-```
-
-### Auditoria
-
-```http
-GET /api/auditoria/usuario/{usuarioId}
-GET /api/auditoria/usuario/{usuarioId}/resumo
-GET /api/auditoria/recentes
-```
-
-## Resposta padrão
-
-Sucesso:
-
-```json
-{
-  "sucesso": true,
-  "mensagem": "Operação realizada com sucesso.",
-  "dados": {},
-  "timestamp": "2026-05-20T10:30:00"
-}
-```
-
-Erro:
-
-```json
-{
-  "sucesso": false,
-  "status": 400,
-  "codigo": "REQUISICAO_INVALIDA",
-  "mensagem": "Existem campos inválidos na requisição.",
-  "erros": [],
-  "timestamp": "2026-05-20T10:30:00"
-}
-```
-
-## Tabelas
-
-- `usuarios`
-- `preferencias_usuario`
-- `servicos_internos`
-- `conteudos_internos`
-- `acessos_servico`
-- `auditoria_acessos`
-- `favoritos_usuario`
-- `sistemas_usuario`
-- `anotacoes_usuario`
-- `processos_internos`
-- `checklist_processo`
-- `usuario_checklist_processo`
-- `cotacoes_propostas`
-- `historico_proposta`
-- `comentarios_proposta`
-
-## Observação de segurança
+## Observação de Segurança
 
 Para o MVP, a senha é salva com hash SHA-256 + salt. Para produção, recomenda-se evoluir para BCrypt/Argon2, JWT/sessão, controle de tentativas e integração com provedor oficial de identidade.
